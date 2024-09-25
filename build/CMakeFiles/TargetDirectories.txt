@@ -1,0 +1,3 @@
+/Users/rienath/Documents/jobs/test projects/json_eval/build/CMakeFiles/json_eval.dir
+/Users/rienath/Documents/jobs/test projects/json_eval/build/CMakeFiles/edit_cache.dir
+/Users/rienath/Documents/jobs/test projects/json_eval/build/CMakeFiles/rebuild_cache.dir
