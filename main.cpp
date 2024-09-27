@@ -1,4 +1,3 @@
-// TODO fix ./json_eval test.json "a.b[1]" always returning doubles
 // TODO fix ./json_eval test.json "max(a.b[0], 10, a.b[1], 15)"
 // TODO add GTest
 // TODO add clang-tidy checks

@@ -1,6 +1,8 @@
 #include "expr_evaluator.h"
 #include <stdexcept>
 #include <algorithm>
+#include <cmath>
+#include <sstream>
 
 ExprEvaluator::ExprEvaluator(const JSONValue &root) : root(root) {
     initializeFunctions();
@@ -194,7 +196,18 @@ std::string ExprEvaluator::jsonValueToString(const JSONValue &value) const {
     } else if (value.isBool()) {
         return value.asBool() ? "true" : "false";
     } else if (value.isNumber()) {
-        return std::to_string(value.asNumber());
+        double num = value.asNumber();
+        if (std::trunc(num) == num) {
+            // Number is an integer
+            std::ostringstream oss;
+            oss << static_cast<int64_t>(num);
+            return oss.str();
+        } else {
+            // Number is a floating-point value
+            std::ostringstream oss;
+            oss << num;
+            return oss.str();
+        }
     } else if (value.isString()) {
         return value.asString();
     } else if (value.isArray()) {
