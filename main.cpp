@@ -1,9 +1,8 @@
-// TODO fix ./json_eval test.json "max(a.b[0], 10, a.b[1], 15)"
-// TODO add GTest
 // TODO add clang-tidy checks
 // TODO add readme
 // TODO implement average() function
 // TODO implement comparison operators
+// TODO add GTests
 // TODO speed up implementation using multithreading
 
 #include <iostream>
@@ -20,7 +19,12 @@ int main(int argc, char *argv[]) {
     }
 
     const char *json_filename = argv[1];
-    const char *expression_str = argv[2];
+    std::string expression_str = argv[2];
+
+    // Remove leading and trailing quotation marks if present
+    if (!expression_str.empty() && expression_str.front() == '"' && expression_str.back() == '"') {
+        expression_str = expression_str.substr(1, expression_str.size() - 2);
+    }
 
     // Read JSON file
     std::ifstream json_file(json_filename);
@@ -43,6 +47,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Parse expression
+    // std::cout << "Expression to parse: \"" << expression_str << "\"" << std::endl;
     ExprParser expr_parser(expression_str);
     ExprPtr expr;
     try {
