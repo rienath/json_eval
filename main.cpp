@@ -1,4 +1,3 @@
-// TODO add clang-tidy checks
 // TODO add readme
 // TODO implement average() function
 // TODO implement comparison operators
@@ -14,12 +13,12 @@
 
 int main(int argc, char *argv[]) {
     if (argc != 3) {
-        std::cerr << "Usage: ./json_eval <json_file> <expression>" << std::endl;
+        std::cerr << "Usage: ./json_eval <json_file> <expression>" << '\n';
         return 1;
     }
 
-    const char *json_filename = argv[1];
-    std::string expression_str = argv[2];
+    const char *json_filename = argv[1]; // NOLINT
+    std::string expression_str = argv[2]; // NOLINT
 
     // Remove leading and trailing quotation marks if present
     if (!expression_str.empty() && expression_str.front() == '"' && expression_str.back() == '"') {
@@ -29,7 +28,7 @@ int main(int argc, char *argv[]) {
     // Read JSON file
     std::ifstream json_file(json_filename);
     if (!json_file) {
-        std::cerr << "Failed to open JSON file: " << json_filename << std::endl;
+        std::cerr << "Failed to open JSON file: " << json_filename << '\n';
         return 1;
     }
     std::stringstream buffer;
@@ -42,18 +41,18 @@ int main(int argc, char *argv[]) {
     try {
         root = json_parser.parse();
     } catch (const std::exception &ex) {
-        std::cerr << "JSON parsing error: " << ex.what() << std::endl;
+        std::cerr << "JSON parsing error: " << ex.what() << '\n';
         return 1;
     }
 
     // Parse expression
-    // std::cout << "Expression to parse: \"" << expression_str << "\"" << std::endl;
+    // std::cout << "Expression to parse: \"" << expression_str << "\"" << '\n';
     ExprParser expr_parser(expression_str);
     ExprPtr expr;
     try {
         expr = expr_parser.parse();
     } catch (const std::exception &ex) {
-        std::cerr << "Expression parsing error: " << ex.what() << std::endl;
+        std::cerr << "Expression parsing error: " << ex.what() << '\n';
         return 1;
     }
 
@@ -61,9 +60,9 @@ int main(int argc, char *argv[]) {
     ExprEvaluator evaluator(root);
     try {
         expr->accept(evaluator);
-        std::cout << evaluator.jsonValueToString(evaluator.result) << std::endl;
+        std::cout << evaluator.jsonValueToString(evaluator.result) << '\n';
     } catch (const std::exception &ex) {
-        std::cerr << "Evaluation error: " << ex.what() << std::endl;
+        std::cerr << "Evaluation error: " << ex.what() << '\n';
         return 1;
     }
 

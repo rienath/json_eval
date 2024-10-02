@@ -7,7 +7,7 @@
 
 class ExprEvaluator : public ExprVisitor {
 public:
-    ExprEvaluator(const JSONValue &root);
+    explicit ExprEvaluator(const JSONValue &root);
 
     void visit(const IdentifierExpr &expr) override;
 
@@ -23,7 +23,7 @@ public:
 
     void visit(const BinaryExpr &expr) override;
 
-    std::string jsonValueToString(const JSONValue &value) const;
+    [[nodiscard]] std::string jsonValueToString(const JSONValue &value) const;
 
 private:
     const JSONValue &root;
@@ -32,9 +32,9 @@ private:
     using FunctionType = std::function<JSONValue(const std::vector<JSONValue> &)>;
     std::unordered_map<std::string, FunctionType> functions;
 
-    JSONValue getValue(const JSONValue &value, const std::string &key) const;
+    [[nodiscard]] static JSONValue getValue(const JSONValue &value, const std::string &key);
 
-    JSONValue getValue(const JSONValue &value, size_t index) const;
+    [[nodiscard]] static JSONValue getValue(const JSONValue &value, size_t index);
 
     void initializeFunctions();
 };

@@ -5,7 +5,7 @@
 ExprParser::ExprParser(const std::string &input) : input(input), pos(0) {}
 
 void ExprParser::skipWhitespace() {
-    while (pos < input.size() && std::isspace(static_cast<unsigned char>(input[pos]))) {
+    while (pos < input.size() && std::isspace(static_cast<unsigned char>(input[pos])) != 0) {
         ++pos;
     }
 }
@@ -93,37 +93,39 @@ ExprPtr ExprParser::parseFactor() {
 
 ExprPtr ExprParser::parsePrimary() {
     skipWhitespace();
-    char ch = peek();
+    char chr = peek();
 
-    if (std::isalpha(static_cast<unsigned char>(ch)) || ch == '_') {
-        ExprPtr id = parseIdentifier();
+    if (std::isalpha(static_cast<unsigned char>(chr)) != 0 || chr == '_') {
+        ExprPtr ide = parseIdentifier();
         skipWhitespace();
         if (match('(')) {
             std::vector<ExprPtr> args = parseArguments();
             if (!match(')')) {
                 throw std::runtime_error("Expected ')'");
             }
-            return std::make_shared<CallExpr>(std::static_pointer_cast<IdentifierExpr>(id)->name, args);
+            return std::make_shared<CallExpr>(std::static_pointer_cast<IdentifierExpr>(ide)->name, args);
         }
-        return id;
-    } else if (std::isdigit(static_cast<unsigned char>(ch)) || ch == '-') {
+        return ide;
+    }
+    if (std::isdigit(static_cast<unsigned char>(chr)) != 0 || chr == '-') {
         return parseNumber();
-    } else if (ch == '"') {
+    }
+    if (chr == '"') {
         return parseString();
-    } else if (match('(')) {
+    }
+    if (match('(')) {
         ExprPtr expr = parseExpression();
         if (!match(')')) {
             throw std::runtime_error("Expected ')'");
         }
         return expr;
-    } else {
-        throw std::runtime_error("Unexpected character in expression");
     }
+    throw std::runtime_error("Unexpected character in expression");
 }
 
 std::shared_ptr<IdentifierExpr> ExprParser::parseIdentifier() {
     std::string name;
-    while (pos < input.size() && (std::isalnum(static_cast<unsigned char>(input[pos])) || input[pos] == '_')) {
+    while (pos < input.size() && (std::isalnum(static_cast<unsigned char>(input[pos])) != 0 || input[pos] == '_')) {
         name += input[pos++];
     }
     if (name.empty()) {
@@ -135,11 +137,11 @@ std::shared_ptr<IdentifierExpr> ExprParser::parseIdentifier() {
 ExprPtr ExprParser::parseNumber() {
     size_t start = pos;
     if (match('-')) {}
-    while (std::isdigit(static_cast<unsigned char>(peek()))) {
+    while (std::isdigit(static_cast<unsigned char>(peek())) != 0) {
         get();
     }
     if (match('.')) {
-        while (std::isdigit(static_cast<unsigned char>(peek()))) {
+        while (std::isdigit(static_cast<unsigned char>(peek())) != 0) {
             get();
         }
     }
@@ -151,12 +153,13 @@ ExprPtr ExprParser::parseString() {
     std::string result;
     match('"');
     while (true) {
-        char ch = get();
-        if (ch == '"') {
+        char chr = get();
+        if (chr == '"') {
             break;
-        } else if (ch == '\\') {
-            ch = get();
-            switch (ch) {
+        }
+        if (chr == '\\') {
+            chr = get();
+            switch (chr) {
                 case '"':
                     result += '"';
                     break;
@@ -184,11 +187,11 @@ ExprPtr ExprParser::parseString() {
                 default:
                     throw std::runtime_error("Invalid escape sequence in string");
             }
-        } else if (ch == '\0') {
-            throw std::runtime_error("Unterminated string literal");
-        } else {
-            result += ch;
         }
+        if (chr == '\0') {
+            throw std::runtime_error("Unterminated string literal");
+        }
+        result += chr;
     }
     return std::make_shared<StringExpr>(result);
 }

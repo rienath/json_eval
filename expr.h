@@ -2,6 +2,7 @@
 #define EXPR_H
 
 #include <string>
+#include <utility>
 #include <vector>
 #include <memory>
 
@@ -22,7 +23,7 @@ class IdentifierExpr : public Expr {
 public:
     std::string name;
 
-    IdentifierExpr(const std::string &name) : name(name) {}
+    explicit IdentifierExpr(std::string name) : name(std::move(name)) {}
 
     void accept(ExprVisitor &visitor) const override;
 };
@@ -31,7 +32,7 @@ class NumberExpr : public Expr {
 public:
     double value;
 
-    NumberExpr(double value) : value(value) {}
+    explicit NumberExpr(double value) : value(value) {}
 
     void accept(ExprVisitor &visitor) const override;
 };
@@ -40,7 +41,7 @@ class StringExpr : public Expr {
 public:
     std::string value;
 
-    StringExpr(const std::string &value) : value(value) {}
+    explicit StringExpr(std::string value) : value(std::move(value)) {}
 
     void accept(ExprVisitor &visitor) const override;
 };
@@ -50,8 +51,8 @@ public:
     ExprPtr object;
     std::string member;
 
-    MemberExpr(ExprPtr object, const std::string &member)
-            : object(std::move(object)), member(member) {}
+    MemberExpr(ExprPtr object, std::string member)
+            : object(std::move(object)), member(std::move(member)) {}
 
     void accept(ExprVisitor &visitor) const override;
 };
@@ -72,8 +73,8 @@ public:
     std::string callee;
     std::vector<ExprPtr> arguments;
 
-    CallExpr(const std::string &callee, std::vector<ExprPtr> arguments)
-            : callee(callee), arguments(std::move(arguments)) {}
+    CallExpr(std::string callee, std::vector<ExprPtr> arguments)
+            : callee(std::move(callee)), arguments(std::move(arguments)) {}
 
     void accept(ExprVisitor &visitor) const override;
 };

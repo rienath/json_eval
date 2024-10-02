@@ -8,7 +8,7 @@ ExprEvaluator::ExprEvaluator(const JSONValue &root) : root(root) {
     initializeFunctions();
 }
 
-void ExprEvaluator::initializeFunctions() {
+void ExprEvaluator::initializeFunctions() { // NOLINT
     functions["min"] = [](const std::vector<JSONValue> &args) -> JSONValue {
         if (args.empty()) {
             throw std::runtime_error("min() requires at least one argument");
@@ -58,13 +58,14 @@ void ExprEvaluator::initializeFunctions() {
         const auto &arg = args[0];
         if (arg.isObject()) {
             return static_cast<double>(arg.asObject().size());
-        } else if (arg.isArray()) {
-            return static_cast<double>(arg.asArray().size());
-        } else if (arg.isString()) {
-            return static_cast<double>(arg.asString().size());
-        } else {
-            throw std::runtime_error("size() argument must be an object, array, or string");
         }
+        if (arg.isArray()) {
+            return static_cast<double>(arg.asArray().size());
+        }
+        if (arg.isString()) {
+            return static_cast<double>(arg.asString().size());
+        }
+        throw std::runtime_error("size() argument must be an object, array, or string");
     };
 }
 
@@ -110,7 +111,7 @@ void ExprEvaluator::visit(const SubscriptExpr &expr) {
         if (!indexValue.isNumber()) {
             throw std::runtime_error("Array index must be a number");
         }
-        size_t index = static_cast<size_t>(indexValue.asNumber());
+        auto index = static_cast<size_t>(indexValue.asNumber());
         result = getValue(arrayValue, index);
     } else if (arrayValue.isObject()) {
         if (!indexValue.isString()) {
@@ -123,8 +124,8 @@ void ExprEvaluator::visit(const SubscriptExpr &expr) {
 }
 
 void ExprEvaluator::visit(const CallExpr &expr) {
-    auto it = functions.find(expr.callee);
-    if (it == functions.end()) {
+    auto itr = functions.find(expr.callee);
+    if (itr == functions.end()) {
         throw std::runtime_error("Unknown function: " + expr.callee);
     }
     std::vector<JSONValue> args;
@@ -132,7 +133,7 @@ void ExprEvaluator::visit(const CallExpr &expr) {
         arg->accept(*this);
         args.push_back(result);
     }
-    result = it->second(args);
+    result = itr->second(args);
 }
 
 void ExprEvaluator::visit(const BinaryExpr &expr) {
@@ -167,19 +168,19 @@ void ExprEvaluator::visit(const BinaryExpr &expr) {
     }
 }
 
-JSONValue ExprEvaluator::getValue(const JSONValue &value, const std::string &key) const {
+JSONValue ExprEvaluator::getValue(const JSONValue &value, const std::string &key) {
     if (!value.isObject()) {
         throw std::runtime_error("Attempted to access member of non-object");
     }
     const auto &obj = value.asObject();
-    auto it = obj.find(key);
-    if (it == obj.end()) {
+    auto itr = obj.find(key);
+    if (itr == obj.end()) {
         throw std::runtime_error("Key not found: " + key);
     }
-    return it->second;
+    return itr->second;
 }
 
-JSONValue ExprEvaluator::getValue(const JSONValue &value, size_t index) const {
+JSONValue ExprEvaluator::getValue(const JSONValue &value, size_t index) {
     if (!value.isArray()) {
         throw std::runtime_error("Attempted to index non-array");
     }
@@ -193,37 +194,41 @@ JSONValue ExprEvaluator::getValue(const JSONValue &value, size_t index) const {
 std::string ExprEvaluator::jsonValueToString(const JSONValue &value) const {
     if (value.isNull()) {
         return "null";
-    } else if (value.isBool()) {
+    }
+    if (value.isBool()) {
         return value.asBool() ? "true" : "false";
-    } else if (value.isNumber()) {
+    }
+    if (value.isNumber()) {
         double num = value.asNumber();
         if (std::trunc(num) == num) {
             // Number is an integer
             std::ostringstream oss;
             oss << static_cast<int64_t>(num);
             return oss.str();
-        } else {
-            // Number is a floating-point value
-            std::ostringstream oss;
-            oss << num;
-            return oss.str();
         }
-    } else if (value.isString()) {
+        // Number is a floating-point value
+        std::ostringstream oss;
+        oss << num;
+        return oss.str();
+    }
+    if (value.isString()) {
         return value.asString();
-    } else if (value.isArray()) {
+    }
+    if (value.isArray()) {
         std::string result = "[ ";
         for (const auto &item: value.asArray()) {
             result += jsonValueToString(item) + ", ";
         }
-        if (result.size() > 2) result.resize(result.size() - 2);
+        if (result.size() > 2) { result.resize(result.size() - 2); }
         result += " ]";
         return result;
-    } else if (value.isObject()) {
+    }
+    if (value.isObject()) {
         std::string result = "{ ";
         for (const auto &[key, val]: value.asObject()) {
             result += "\"" + key + "\": " + jsonValueToString(val) + ", ";
         }
-        if (result.size() > 2) result.resize(result.size() - 2);
+        if (result.size() > 2) { result.resize(result.size() - 2); }
         result += " }";
         return result;
     }

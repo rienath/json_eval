@@ -1,11 +1,16 @@
 #include "json_parser.h"
 #include <cctype>
 #include <stdexcept>
+#include <string>
+
+constexpr size_t falseTokenLength = 5;
+constexpr size_t trueTokenLength = 4;
+constexpr size_t nullTokenLength = 4;
 
 JSONParser::JSONParser(const std::string &input) : input(input), pos(0) {}
 
 void JSONParser::skipWhitespace() {
-    while (pos < input.size() && std::isspace(static_cast<unsigned char>(input[pos]))) {
+    while (pos < input.size() && std::isspace(static_cast<unsigned char>(input[pos])) != 0) {
         ++pos;
     }
 }
@@ -38,24 +43,29 @@ JSONValue JSONParser::parse() {
 
 JSONValue JSONParser::parseValue() {
     skipWhitespace();
-    char ch = peek();
-    if (ch == '"') {
+    char chr = peek();
+    if (chr == '"') {
         return parseString();
-    } else if (ch == '{') {
-        return parseObject();
-    } else if (ch == '[') {
-        return parseArray();
-    } else if (ch == 't') {
-        return parseTrue();
-    } else if (ch == 'f') {
-        return parseFalse();
-    } else if (ch == 'n') {
-        return parseNull();
-    } else if (ch == '-' || std::isdigit(static_cast<unsigned char>(ch))) {
-        return parseNumber();
-    } else {
-        throw std::runtime_error(std::string("Unexpected character: ") + ch);
     }
+    if (chr == '{') {
+        return parseObject();
+    }
+    if (chr == '[') {
+        return parseArray();
+    }
+    if (chr == 't') {
+        return parseTrue();
+    }
+    if (chr == 'f') {
+        return parseFalse();
+    }
+    if (chr == 'n') {
+        return parseNull();
+    }
+    if (chr == '-' || std::isdigit(static_cast<unsigned char>(chr)) != 0) {
+        return parseNumber();
+    }
+    throw std::runtime_error(std::string("Unexpected character: ") + chr);
 }
 
 JSONValue JSONParser::parseObject() {
@@ -114,12 +124,13 @@ std::string JSONParser::parseRawString() {
     std::string result;
     match('"');
     while (true) {
-        char ch = get();
-        if (ch == '"') {
+        char chr = get();
+        if (chr == '"') {
             break;
-        } else if (ch == '\\') {
-            ch = get();
-            switch (ch) {
+        }
+        if (chr == '\\') {
+            chr = get();
+            switch (chr) {
                 case '"':
                     result += '"';
                     break;
@@ -145,12 +156,12 @@ std::string JSONParser::parseRawString() {
                     result += '\t';
                     break;
                 default:
-                    throw std::runtime_error(std::string("Invalid escape character: \\") + ch);
+                    throw std::runtime_error(std::string("Invalid escape character: \\") + chr);
             }
-        } else if (ch == '\0') {
+        } else if (chr == '\0') {
             throw std::runtime_error("Unterminated string");
         } else {
-            result += ch;
+            result += chr;
         }
     }
     return result;
@@ -163,11 +174,11 @@ JSONValue JSONParser::parseString() {
 JSONValue JSONParser::parseNumber() {
     size_t start = pos;
     if (match('-')) {}
-    while (std::isdigit(static_cast<unsigned char>(peek()))) {
+    while (std::isdigit(static_cast<unsigned char>(peek())) != 0) {
         get();
     }
     if (match('.')) {
-        while (std::isdigit(static_cast<unsigned char>(peek()))) {
+        while (std::isdigit(static_cast<unsigned char>(peek())) != 0) {
             get();
         }
     }
@@ -176,7 +187,7 @@ JSONValue JSONParser::parseNumber() {
         if (peek() == '+' || peek() == '-') {
             get();
         }
-        while (std::isdigit(static_cast<unsigned char>(peek()))) {
+        while (std::isdigit(static_cast<unsigned char>(peek())) != 0) {
             get();
         }
     }
@@ -185,24 +196,24 @@ JSONValue JSONParser::parseNumber() {
 }
 
 JSONValue JSONParser::parseTrue() {
-    if (input.substr(pos, 4) == "true") {
-        pos += 4;
+    if (input.substr(pos, trueTokenLength) == "true") {
+        pos += trueTokenLength;
         return true;
     }
     throw std::runtime_error("Invalid value, expected 'true'");
 }
 
 JSONValue JSONParser::parseFalse() {
-    if (input.substr(pos, 5) == "false") {
-        pos += 5;
+    if (input.substr(pos, falseTokenLength) == "false") {
+        pos += falseTokenLength;
         return false;
     }
     throw std::runtime_error("Invalid value, expected 'false'");
 }
 
 JSONValue JSONParser::parseNull() {
-    if (input.substr(pos, 4) == "null") {
-        pos += 4;
+    if (input.substr(pos, nullTokenLength) == "null") {
+        pos += nullTokenLength;
         return nullptr;
     }
     throw std::runtime_error("Invalid value, expected 'null'");

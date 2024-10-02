@@ -6,7 +6,7 @@
 
 class ExprParser {
 public:
-    ExprParser(const std::string &input);
+    explicit ExprParser(const std::string &input);
 
     ExprPtr parse();
 
@@ -16,7 +16,7 @@ private:
 
     void skipWhitespace();
 
-    char peek() const;
+    [[nodiscard]] char peek() const;
 
     char get();
 
