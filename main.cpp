@@ -1,4 +1,3 @@
-// TODO add GTests
 // TODO implement average() function
 // TODO implement comparison operators
 // TODO speed up implementation using multithreading
