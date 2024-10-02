@@ -1,7 +1,6 @@
-// TODO add readme
+// TODO add GTests
 // TODO implement average() function
 // TODO implement comparison operators
-// TODO add GTests
 // TODO speed up implementation using multithreading
 
 #include <iostream>
