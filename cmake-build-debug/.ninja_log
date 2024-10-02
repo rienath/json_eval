@@ -1,7 +1,0 @@
-# ninja log v6
-1	1105	1727253494966049790	CMakeFiles/json_eval.dir/expr.cpp.o	bce11546b1d5ff8a
-2	1144	1727253494966358018	CMakeFiles/json_eval.dir/expr_parser.cpp.o	ed8d1ad6bdd684d1
-1	1502	1727253494965669895	CMakeFiles/json_eval.dir/json_parser.cpp.o	d41e8c41dd78671f
-0	1545	1727253494965060238	CMakeFiles/json_eval.dir/main.cpp.o	2cc0190ec3e7cdc5
-2	1825	1727253494966638012	CMakeFiles/json_eval.dir/expr_evaluator.cpp.o	6b77ec8a0c4ee1b1
-1825	1896	1727253496789943632	json_eval	38ca124a2d993ee8
