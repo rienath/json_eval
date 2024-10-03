@@ -32,7 +32,7 @@ This is a C++ console application that allows evaluating expressions on a JSON f
 
 ### Prerequisites
 
-- **Clang Compiler**: Ensure that Clang is installed on your system.
+- **Clang Compiler**: Ensure that Clang is installed.
 
   ```bash
   clang --version
@@ -47,7 +47,7 @@ This is a C++ console application that allows evaluating expressions on a JSON f
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/rienath/json_eval.git
+git clone --recursive https://github.com/rienath/json_eval.git
 cd json_eval
 ```
 
