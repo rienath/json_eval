@@ -117,6 +117,19 @@ TEST_F(ExprEvaluatorTest, EvaluateArithmeticExpressionModulo) {
     EXPECT_EQ(evaluator.result.asNumber(), 1);
 }
 
+TEST_F(ExprEvaluatorTest, EvaluateArithmeticExpressionParallel) {
+    std::string expression_str = "min(a.b[3]) + size(a.b)";
+    if (!expression_str.empty() && expression_str.front() == '"' && expression_str.back() == '"') {
+        expression_str = expression_str.substr(1, expression_str.size() - 2);
+    }
+    ExprParser parser(expression_str);
+    ExprPtr expr = parser.parse();
+    ExprEvaluator evaluator(jsonRoot);
+    expr->accept(evaluator);
+    EXPECT_TRUE(evaluator.result.isNumber());
+    EXPECT_EQ(evaluator.result.asNumber(), 15);
+}
+
 TEST_F(ExprEvaluatorTest, EvaluateNumberLiteral) {
     std::string expression_str = "max(a.b[0], 10, a.b[1], 15)";
     ExprParser parser(expression_str);

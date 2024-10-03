@@ -176,11 +176,21 @@ void ExprEvaluator::visit(const CallExpr &expr) {
 }
 
 void ExprEvaluator::visit(const BinaryExpr &expr) {
-    expr.left->accept(*this);
-    JSONValue leftValue = result;
+    // Evaluate left and right operands in parallel. Safe as long as JSON is immutable
+    auto leftFuture = std::async(std::launch::async, [this, &expr]() -> JSONValue {
+        ExprEvaluator evaluator(this->root);
+        expr.left->accept(evaluator);
+        return evaluator.result;
+    });
 
-    expr.right->accept(*this);
-    JSONValue rightValue = result;
+    auto rightFuture = std::async(std::launch::async, [this, &expr]() -> JSONValue {
+        ExprEvaluator evaluator(this->root);
+        expr.right->accept(evaluator);
+        return evaluator.result;
+    });
+
+    JSONValue leftValue = leftFuture.get();
+    JSONValue rightValue = rightFuture.get();
 
     if (!leftValue.isNumber() || !rightValue.isNumber()) {
         throw std::runtime_error("Binary operations require numeric operands");

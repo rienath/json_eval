@@ -6,16 +6,21 @@ This is a C++ console application that allows evaluating expressions on a JSON f
 
 - **JSON Path Expressions**: Supports accessing JSON elements using dot notation and array indices.
 - **Expressions in Subscripts**: Allows using expressions within subscript operators.
-- **Intrinsic Functions**: 
-  -  `min(args...)`: Returns the minimum value among the arguments.
-  -  `max(args...)`: Returns the maximum value among the arguments.
-  -  `size(arg)`: Returns the size of an object, array, or string.
-  -  `average(args...)`: Returns the average of numeric arguments or numbers within arrays.
+- **Intrinsic Functions**:
+    - `min(args...)`: Returns the minimum value among the arguments.
+    - `max(args...)`: Returns the maximum value among the arguments.
+    - `size(arg)`: Returns the size of an object, array, or string.
+    - `average(args...)`: Returns the average of numeric arguments or numbers within arrays.
 
-- **Arithmetic Operations**: Supports arithmetic binary operators: `+`, `-`, `*`, `/`.
+- **Arithmetic Operations**: Supports arithmetic binary operators: `+`, `-`, `*`, `/`, `%`.
 - **Number Literals**: Can use number literals within expressions.
 - **Error Handling**: Provides reasonable error reporting for invalid JSON or expressions.
 - **Automated Tests**: Includes unit tests to verify functionality.
+- **Multithreading**:
+    - Function arguments are evaluated in parallel, i.e. the three arguments
+      inside `max(min(largeArray1), size(largeArray2), average(deeplyNestedObject))`.
+    - Left and right operands of binary expressions are evaluated in parallel i.e.
+      here `min(largeArray1) + size(largeArray2)`.
 
 ## Requirements
 
@@ -189,22 +194,22 @@ Here are the examples formatted as requested:
   ```
 
 - **Using Arithmetic Operations:**
-    
+
     ```bash
-    ./json_eval test.json "min(a.b[3], 5) + a.b[1]"
-    7
+    ./json_eval test.json "min(a.b[3]) + size(a.b)"
+    15
     ```
-    
+
     ```bash
     ./json_eval test.json "min(a.b[3], 5) - a.b[1]"
     3
     ```
-    
+
     ```bash
     ./json_eval test.json "min(a.b[3], 5) * a.b[1]"
     10
     ```
-    
+
     ```bash
     ./json_eval test.json "min(a.b[3], 5) / a.b[1]"
     2.5
