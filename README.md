@@ -6,7 +6,12 @@ This is a C++ console application that allows evaluating expressions on a JSON f
 
 - **JSON Path Expressions**: Supports accessing JSON elements using dot notation and array indices.
 - **Expressions in Subscripts**: Allows using expressions within subscript operators.
-- **Intrinsic Functions**: Includes functions such as `min`, `max`, and `size`.
+- **Intrinsic Functions**: 
+  -  `min(args...)`: Returns the minimum value among the arguments.
+  -  `max(args...)`: Returns the maximum value among the arguments.
+  -  `size(arg)`: Returns the size of an object, array, or string.
+  -  `average(args...)`: Returns the average of numeric arguments or numbers within arrays.
+
 - **Arithmetic Operations**: Supports arithmetic binary operators: `+`, `-`, `*`, `/`.
 - **Number Literals**: Can use number literals within expressions.
 - **Error Handling**: Provides reasonable error reporting for invalid JSON or expressions.
@@ -153,6 +158,27 @@ Here are the examples formatted as requested:
       ```bash
       ./json_eval test.json "size(a.b[a.b[1]].c)"
       4
+      ```
+
+    - **average Function:**
+        ```bash
+      ./json_eval test.json "average(a.b[0], a.b[1], 5)"
+      2.66667
+      ```
+
+      ```bash
+      ./json_eval test.json "average(a.b[3])"
+      11.5
+      ```
+
+      ```bash
+      ./json_eval test.json "average(a.b[3], 5)"
+      9.33333
+      ```
+
+      ```bash
+      ./json_eval test.json "average(max(a.b[0], a.b[1]), min(a.b[3]))"
+      6.5
       ```
 
 - **Using Number Literals:**

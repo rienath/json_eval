@@ -63,6 +63,15 @@ TEST_F(ExprEvaluatorTest, EvaluateNestedSubscript) {
     EXPECT_EQ(evaluator.result.asString(), "test");
 }
 
+TEST_F(ExprEvaluatorTest, EvaluateIntrinsicFunctionAverage) {
+ExprParser parser("average(a.b[3], 5)");
+ExprPtr expr = parser.parse();
+ExprEvaluator evaluator(jsonRoot);
+expr->accept(evaluator);
+EXPECT_TRUE(evaluator.result.isNumber());
+EXPECT_EQ(static_cast<int>(evaluator.result.asNumber()), 9);
+}
+
 TEST_F(ExprEvaluatorTest, EvaluateIntrinsicFunctionMax) {
     ExprParser parser("max(a.b[0], a.b[1])");
     ExprPtr expr = parser.parse();

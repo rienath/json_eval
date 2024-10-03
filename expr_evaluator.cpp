@@ -67,6 +67,33 @@ void ExprEvaluator::initializeFunctions() { // NOLINT
         }
         throw std::runtime_error("size() argument must be an object, array, or string");
     };
+
+    functions["average"] = [](const std::vector<JSONValue> &args) -> JSONValue {
+        if (args.empty()) {
+            throw std::runtime_error("average() requires at least one argument");
+        }
+        double sum = 0;
+        size_t count = 0;
+        for (const auto &arg: args) {
+            if (arg.isNumber()) {
+                sum += arg.asNumber();
+                ++count;
+            } else if (arg.isArray()) {
+                for (const auto &item: arg.asArray()) {
+                    if (item.isNumber()) {
+                        sum += item.asNumber();
+                        ++count;
+                    }
+                }
+            } else {
+                throw std::runtime_error("average() arguments must be numbers or arrays of numbers");
+            }
+        }
+        if (count == 0) {
+            throw std::runtime_error("average() requires at least one numeric value");
+        }
+        return sum / count;
+    };
 }
 
 void ExprEvaluator::visit(const IdentifierExpr &expr) {
