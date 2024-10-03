@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <sstream>
+#include <future>
 
 ExprEvaluator::ExprEvaluator(const JSONValue &root) : root(root) {
     initializeFunctions();
@@ -151,16 +152,27 @@ void ExprEvaluator::visit(const SubscriptExpr &expr) {
 }
 
 void ExprEvaluator::visit(const CallExpr &expr) {
-    auto itr = functions.find(expr.callee);
-    if (itr == functions.end()) {
+    auto it = functions.find(expr.callee);
+    if (it == functions.end()) {
         throw std::runtime_error("Unknown function: " + expr.callee);
     }
-    std::vector<JSONValue> args;
+
+    // Evaluate arguments in parallel. For thread safety new ExprEvaluator is created for each argument
+    std::vector<std::future<JSONValue>> futures;
     for (const auto &arg: expr.arguments) {
-        arg->accept(*this);
-        args.push_back(result);
+        futures.push_back(std::async(std::launch::async, [this, &arg]() -> JSONValue {
+            ExprEvaluator evaluator(this->root);
+            arg->accept(evaluator);
+            return evaluator.result;
+        }));
     }
-    result = itr->second(args);
+
+    std::vector<JSONValue> args;
+    for (auto &fut: futures) {
+        args.push_back(fut.get());
+    }
+
+    result = it->second(args);
 }
 
 void ExprEvaluator::visit(const BinaryExpr &expr) {

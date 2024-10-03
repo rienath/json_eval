@@ -1,5 +1,3 @@
-// TODO speed up implementation using multithreading
-
 #include <iostream>
 #include <fstream>
 #include <sstream>
