@@ -192,6 +192,12 @@ void ExprEvaluator::visit(const BinaryExpr &expr) {
             }
             result = leftNum / rightNum;
             break;
+        case BinaryExpr::Operator::Modulo:
+            if (rightNum == 0) {
+                throw std::runtime_error("Division by zero in modulo operation");
+            }
+            result = std::fmod(leftNum, rightNum);
+            break;
     }
 }
 

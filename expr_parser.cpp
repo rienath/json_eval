@@ -62,6 +62,9 @@ ExprPtr ExprParser::parseTerm() {
         } else if (match('/')) {
             ExprPtr right = parseFactor();
             expr = std::make_shared<BinaryExpr>(expr, BinaryExpr::Operator::Divide, right);
+        } else if (match('%')) {
+            ExprPtr right = parseFactor();
+            expr = std::make_shared<BinaryExpr>(expr, BinaryExpr::Operator::Modulo, right);
         } else {
             break;
         }

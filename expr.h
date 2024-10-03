@@ -82,7 +82,7 @@ public:
 class BinaryExpr : public Expr {
 public:
     enum class Operator {
-        Add, Subtract, Multiply, Divide
+        Add, Subtract, Multiply, Divide, Modulo
     };
     ExprPtr left;
     ExprPtr right;

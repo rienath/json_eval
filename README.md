@@ -188,6 +188,33 @@ Here are the examples formatted as requested:
   15
   ```
 
+- **Using Arithmetic Operations:**
+    
+    ```bash
+    ./json_eval test.json "min(a.b[3], 5) + a.b[1]"
+    7
+    ```
+    
+    ```bash
+    ./json_eval test.json "min(a.b[3], 5) - a.b[1]"
+    3
+    ```
+    
+    ```bash
+    ./json_eval test.json "min(a.b[3], 5) * a.b[1]"
+    10
+    ```
+    
+    ```bash
+    ./json_eval test.json "min(a.b[3], 5) / a.b[1]"
+    2.5
+    ```
+
+    ```bash
+    ./json_eval test.json "min(a.b[3], 5) % a.b[1]"
+    1
+    ```
+
 ### Running the Tests
 
 The project includes automated tests using the Catch2 framework.

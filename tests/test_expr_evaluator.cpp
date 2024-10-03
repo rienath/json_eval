@@ -108,6 +108,15 @@ TEST_F(ExprEvaluatorTest, EvaluateArithmeticExpression) {
     EXPECT_EQ(evaluator.result.asNumber(), 3);
 }
 
+TEST_F(ExprEvaluatorTest, EvaluateArithmeticExpressionModulo) {
+    ExprParser parser("a.b[0] % a.b[1]");
+    ExprPtr expr = parser.parse();
+    ExprEvaluator evaluator(jsonRoot);
+    expr->accept(evaluator);
+    EXPECT_TRUE(evaluator.result.isNumber());
+    EXPECT_EQ(evaluator.result.asNumber(), 1);
+}
+
 TEST_F(ExprEvaluatorTest, EvaluateNumberLiteral) {
     std::string expression_str = "max(a.b[0], 10, a.b[1], 15)";
     ExprParser parser(expression_str);
